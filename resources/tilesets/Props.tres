@@ -1,0 +1,99 @@
+[gd_resource type="TileSet" format=3 uid="uid://dgeacnrd5gdrk"]
+
+[ext_resource type="Texture2D" uid="uid://b7sfepful1lsk" path="res://assets/environment/animated_tiles/Bushe1.png" id="1_bs42n"]
+[ext_resource type="Texture2D" uid="uid://dvgugrr3u0tgt" path="res://assets/environment/animated_tiles/Bushe2.png" id="2_cp4g3"]
+[ext_resource type="Texture2D" uid="uid://cp56ij5kfa3g3" path="res://assets/environment/animated_tiles/Bushe3.png" id="3_ffw2f"]
+[ext_resource type="Texture2D" uid="uid://d28phbamk8kjk" path="res://assets/environment/animated_tiles/Tree3.png" id="4_edwi3"]
+[ext_resource type="Texture2D" uid="uid://3m8pebm3o5l0" path="res://assets/environment/animated_tiles/Tree4.png" id="5_neufe"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gm4i7"]
+texture = ExtResource("1_bs42n")
+texture_region_size = Vector2i(128, 128)
+1:1/0 = 0
+0:0/animation_speed = 8.0
+0:0/animation_mode = 1
+0:0/0 = 0
+1:0/animation_frame_0/duration = 1.0
+1:0/animation_frame_1/duration = 1.0
+1:0/animation_frame_2/duration = 1.0
+1:0/animation_frame_3/duration = 1.0
+1:0/animation_frame_4/duration = 1.0
+1:0/animation_frame_5/duration = 1.0
+1:0/animation_frame_6/duration = 1.0
+1:0/0 = 0
+0:1/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2ydt1"]
+texture = ExtResource("2_cp4g3")
+texture_region_size = Vector2i(128, 128)
+0:0/animation_speed = 8.0
+0:0/animation_mode = 1
+0:0/animation_frame_0/duration = 1.0
+0:0/animation_frame_1/duration = 1.0
+0:0/animation_frame_2/duration = 1.0
+0:0/animation_frame_3/duration = 1.0
+0:0/animation_frame_4/duration = 1.0
+0:0/animation_frame_5/duration = 1.0
+0:0/animation_frame_6/duration = 1.0
+0:0/animation_frame_7/duration = 1.0
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v63tm"]
+texture = ExtResource("3_ffw2f")
+texture_region_size = Vector2i(128, 128)
+0:5/0 = 0
+0:0/animation_speed = 8.0
+0:0/animation_mode = 1
+0:0/animation_frame_0/duration = 1.0
+0:0/animation_frame_1/duration = 1.0
+0:0/animation_frame_2/duration = 1.0
+0:0/animation_frame_3/duration = 1.0
+0:0/animation_frame_4/duration = 1.0
+0:0/animation_frame_5/duration = 1.0
+0:0/animation_frame_6/duration = 1.0
+0:0/animation_frame_7/duration = 1.0
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iu7am"]
+texture = ExtResource("4_edwi3")
+texture_region_size = Vector2i(192, 192)
+0:0/animation_speed = 8.0
+0:0/animation_mode = 1
+0:0/animation_frame_0/duration = 1.0
+0:0/animation_frame_1/duration = 1.0
+0:0/animation_frame_2/duration = 1.0
+0:0/animation_frame_3/duration = 1.0
+0:0/animation_frame_4/duration = 1.0
+0:0/animation_frame_5/duration = 1.0
+0:0/animation_frame_6/duration = 1.0
+0:0/animation_frame_7/duration = 1.0
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 64)
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v60ih"]
+texture = ExtResource("5_neufe")
+texture_region_size = Vector2i(192, 192)
+0:0/animation_speed = 8.0
+0:0/animation_mode = 1
+0:0/animation_frame_0/duration = 1.0
+0:0/animation_frame_1/duration = 1.0
+0:0/animation_frame_2/duration = 1.0
+0:0/animation_frame_3/duration = 1.0
+0:0/animation_frame_4/duration = 1.0
+0:0/animation_frame_5/duration = 1.0
+0:0/animation_frame_6/duration = 1.0
+0:0/animation_frame_7/duration = 1.0
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(2, 64)
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[resource]
+tile_size = Vector2i(32, 32)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_gm4i7")
+sources/1 = SubResource("TileSetAtlasSource_2ydt1")
+sources/2 = SubResource("TileSetAtlasSource_v63tm")
+sources/3 = SubResource("TileSetAtlasSource_iu7am")
+sources/4 = SubResource("TileSetAtlasSource_v60ih")
