@@ -15,18 +15,28 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="TheKnightOfTheSevenKingdoms"
-run/main_scene="uid://dnjylx21gjgut"
+run/main_scene="uid://dt7koadfp8lf3"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+PlayerData="*uid://djghyogebexfj"
+LevelData="*uid://c6i75vq6uwama"
+
 [display]
 
-window/size/viewport_width=1080
-window/size/viewport_height=720
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 
 [dotnet]
 
 project/assembly_name="GDC_RPG_Essentials_Starter-Kit"
+
+[global_group]
+
+player=""
+enemies=""
 
 [input]
 

@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://yeismdl22k6r"]
+
+[ext_resource type="FontFile" uid="uid://d00h4ctsh5ohj" path="res://assets/fonts/PirataOne-Regular.ttf" id="1_ketox"]
+[ext_resource type="Script" uid="uid://4p3frqqvhtp6" path="res://scenes/ui/end_game_screen.gd" id="1_svl4o"]
+[ext_resource type="Texture2D" uid="uid://dd5chn7mty8ao" path="res://assets/ui/buttons/Button_Blue_3Slides.png" id="2_svl4o"]
+[ext_resource type="Texture2D" uid="uid://t6ugsh3rd7ag" path="res://assets/ui/buttons/Button_Blue_3Slides_Pressed.png" id="3_x8rbx"]
+[ext_resource type="Texture2D" uid="uid://crpe6wlm1i2bo" path="res://assets/ui/buttons/Button_Hover_3Slides.png" id="4_grgci"]
+
+[node name="EndGameScreen" type="Control" unique_id=1042599428]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_svl4o")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=266403863]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0.02745098, 0.46666667)
+
+[node name="VB" type="VBoxContainer" parent="." unique_id=1333762887]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 150
+alignment = 1
+
+[node name="Result" type="Label" parent="VB" unique_id=687847345]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 16
+theme_override_fonts/font = ExtResource("1_ketox")
+theme_override_font_sizes/font_size = 164
+text = "Game Over"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="VB" unique_id=1601200029]
+layout_mode = 2
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="Replay" type="TextureButton" parent="VB/Buttons" unique_id=2090900304]
+custom_minimum_size = Vector2(450, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("2_svl4o")
+texture_pressed = ExtResource("3_x8rbx")
+texture_hover = ExtResource("4_grgci")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="VB/Buttons/Replay" unique_id=636615266]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 16
+theme_override_fonts/font = ExtResource("1_ketox")
+theme_override_font_sizes/font_size = 60
+text = "Replay"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainMenu" type="TextureButton" parent="VB/Buttons" unique_id=1332782771]
+custom_minimum_size = Vector2(450, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("2_svl4o")
+texture_pressed = ExtResource("3_x8rbx")
+texture_hover = ExtResource("4_grgci")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="VB/Buttons/MainMenu" unique_id=561540204]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 16
+theme_override_fonts/font = ExtResource("1_ketox")
+theme_override_font_sizes/font_size = 60
+text = "Main Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="VB/Buttons/Replay" to="." method="_on_replay_pressed"]
+[connection signal="pressed" from="VB/Buttons/MainMenu" to="." method="_on_main_menu_pressed"]
