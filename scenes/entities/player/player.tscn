@@ -2,9 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://dd14yvscw8gcd" path="res://assets/sprites/player/Warrior_Blue.png" id="1_1hmtu"]
 [ext_resource type="Script" uid="uid://cgmgxg6t0qhhy" path="res://scenes/entities/player/player.gd" id="1_635qg"]
-[ext_resource type="AudioStreamWAV" uid="uid://cqtvit1l3yl31" path="res://assets/audio/sfx/sword_clash.wav" id="2_clash1"]
-[ext_resource type="AudioStreamWAV" uid="uid://btas3bxmdmvst" path="res://assets/audio/sfx/sword_clash_2.wav" id="3_clash2"]
-[ext_resource type="AudioStreamWAV" uid="uid://dvoi4hc8yv4ya" path="res://assets/audio/sfx/foley_footstep_gravel_3.wav" id="4_footstep"]
+[ext_resource type="AudioStream" uid="uid://cqtvit1l3yl31" path="res://assets/audio/sfx/sword_clash.wav" id="2_clash1"]
+[ext_resource type="AudioStream" uid="uid://btas3bxmdmvst" path="res://assets/audio/sfx/sword_clash_2.wav" id="3_clash2"]
+[ext_resource type="AudioStream" uid="uid://dvoi4hc8yv4ya" path="res://assets/audio/sfx/foley_footstep_gravel_3.wav" id="4_footstep"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_635qg"]
 radius = 24.020824
@@ -440,13 +440,13 @@ position = Vector2(1.000001, -23)
 rotation = 6.2831855
 shape = SubResource("RectangleShape2D_635qg")
 
-[node name="SfxAttack" type="AudioStreamPlayer2D" parent="."]
+[node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=2126380954]
 stream = ExtResource("2_clash1")
 
-[node name="SfxHurt" type="AudioStreamPlayer2D" parent="."]
+[node name="SfxHurt" type="AudioStreamPlayer2D" parent="." unique_id=634731834]
 stream = ExtResource("3_clash2")
 
-[node name="SfxFootstep" type="AudioStreamPlayer2D" parent="."]
+[node name="SfxFootstep" type="AudioStreamPlayer2D" parent="." unique_id=309982817]
 stream = ExtResource("4_footstep")
 
 [connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]
