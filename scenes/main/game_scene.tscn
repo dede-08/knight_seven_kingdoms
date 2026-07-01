@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bd85u4x072t3l"]
 
 [ext_resource type="Script" uid="uid://dkwwdcjbi5h0b" path="res://scenes/main/game_scene.gd" id="1_rfwcf"]
+[ext_resource type="AudioStreamWAV" uid="uid://dc841vkqyilge" path="res://assets/audio/sfx/8_bit_chime_positive.wav" id="7_levelup"]
 [ext_resource type="PackedScene" uid="uid://dnjylx21gjgut" path="res://scenes/maps/test_map.tscn" id="2_5odut"]
 [ext_resource type="PackedScene" uid="uid://yeismdl22k6r" path="res://scenes/ui/end_game_screen.tscn" id="2_yaarb"]
 [ext_resource type="Texture2D" uid="uid://d1s23p8dn0ay1" path="res://assets/ui/elements/Carved_3Slides.png" id="4_8gxuo"]
@@ -11,6 +12,9 @@
 [node name="GameScene" type="Node2D" unique_id=1321995244]
 script = ExtResource("1_rfwcf")
 end_game_screen_packed = ExtResource("2_yaarb")
+
+[node name="SfxLevelUp" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_levelup")
 
 [node name="TestMap" parent="." unique_id=224211428 instance=ExtResource("2_5odut")]
 

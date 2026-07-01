@@ -8,6 +8,7 @@ var total_enemies: int
 var killed_enemies: int = 0
 
 @onready var HUD: Control = $UI/HUD
+@onready var sfx_level_up: AudioStreamPlayer = $SfxLevelUp
 
 func _ready() -> void:
 	var enemy_array: Array = get_tree().get_nodes_in_group("enemies")
@@ -39,6 +40,7 @@ func level_up(new_experience: int) -> void:
 	new_experience -= LevelData.LEVEL_THRESHOLDS[PlayerData.level - 1]
 	PlayerData.level += 1
 	PlayerData.experience = new_experience
+	sfx_level_up.play()
 	levelup.emit()
 	HUD.update_level_indicator()
 
