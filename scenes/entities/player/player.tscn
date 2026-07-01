@@ -2,12 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://dd14yvscw8gcd" path="res://assets/sprites/player/Warrior_Blue.png" id="1_1hmtu"]
 [ext_resource type="Script" uid="uid://cgmgxg6t0qhhy" path="res://scenes/entities/player/player.gd" id="1_635qg"]
-<<<<<<< HEAD
 [ext_resource type="AudioStreamWAV" uid="uid://cqtvit1l3yl31" path="res://assets/audio/sfx/sword_clash.wav" id="2_clash1"]
 [ext_resource type="AudioStreamWAV" uid="uid://btas3bxmdmvst" path="res://assets/audio/sfx/sword_clash_2.wav" id="3_clash2"]
-=======
-[ext_resource type="AudioStream" uid="uid://cqtvit1l3yl31" path="res://assets/audio/sfx/sword_clash.wav" id="3_58kc7"]
->>>>>>> a7ffaba (cambios locales)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_635qg"]
 radius = 24.020824
@@ -443,15 +439,10 @@ position = Vector2(1.000001, -23)
 rotation = 6.2831855
 shape = SubResource("RectangleShape2D_635qg")
 
-<<<<<<< HEAD
 [node name="SfxAttack" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("2_clash1")
 
 [node name="SfxHurt" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_clash2")
-=======
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=20716659]
-stream = ExtResource("3_58kc7")
->>>>>>> a7ffaba (cambios locales)
 
 [connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]
