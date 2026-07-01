@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cgmgxg6t0qhhy" path="res://scenes/entities/player/player.gd" id="1_635qg"]
 [ext_resource type="AudioStreamWAV" uid="uid://cqtvit1l3yl31" path="res://assets/audio/sfx/sword_clash.wav" id="2_clash1"]
 [ext_resource type="AudioStreamWAV" uid="uid://btas3bxmdmvst" path="res://assets/audio/sfx/sword_clash_2.wav" id="3_clash2"]
+[ext_resource type="AudioStreamWAV" uid="uid://dvoi4hc8yv4ya" path="res://assets/audio/sfx/foley_footstep_gravel_3.wav" id="4_footstep"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_635qg"]
 radius = 24.020824
@@ -444,5 +445,8 @@ stream = ExtResource("2_clash1")
 
 [node name="SfxHurt" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_clash2")
+
+[node name="SfxFootstep" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_footstep")
 
 [connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]

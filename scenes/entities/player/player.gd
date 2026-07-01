@@ -24,6 +24,10 @@ var hitpoints_max: int
 @onready var animation_playback: AnimationNodeStateMachinePlayback = $AnimationTree["parameters/playback"]
 @onready var sfx_attack: AudioStreamPlayer2D = $SfxAttack
 @onready var sfx_hurt: AudioStreamPlayer2D = $SfxHurt
+@onready var sfx_footstep: AudioStreamPlayer2D = $SfxFootstep
+
+var _footstep_timer: float = 0.0
+const FOOTSTEP_INTERVAL: float = 0.3
 
 func _ready() -> void:
 	hitpoints_max = hitpoints
@@ -35,9 +39,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		attack()
 	
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not state == State.ATTACK:
 		movement_loop()
+	_update_footstep(delta)
+
+func _update_footstep(delta: float) -> void:
+	if state == State.RUN:
+		_footstep_timer += delta
+		if _footstep_timer >= FOOTSTEP_INTERVAL:
+			_footstep_timer = 0.0
+			sfx_footstep.play()
+	else:
+		_footstep_timer = 0.0
 
 func calculate_stats() -> void:
 	attack_speed = Equations.calculate_attack_speed()
