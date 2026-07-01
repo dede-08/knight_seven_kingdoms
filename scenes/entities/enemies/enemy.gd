@@ -28,6 +28,8 @@ var state: State = State.IDLE
 @onready var animation_playback: AnimationNodeStateMachinePlayback = $AnimationTree["parameters/playback"]
 @onready var player: CharacterBody2D = get_tree().get_first_node_in_group("player")
 @onready var nav_agent: NavigationAgent2D = $NavigationAgent2D
+@onready var sfx_attack: AudioStreamPlayer2D = $SfxAttack
+@onready var sfx_hurt: AudioStreamPlayer2D = $SfxHurt
 
 func _ready() -> void:
 	animation_tree.set_active(true)
@@ -92,6 +94,7 @@ func update_animation() -> void:
 			animation_playback.travel("attack")
 
 func attack() -> void:
+	sfx_attack.play()
 	var player_pos: Vector2 = player.global_position
 	var attack_dir: Vector2 = (player_pos - global_position).normalized()
 	$Sprite2D.flip_h = attack_dir.x < 0 and abs(attack_dir.x) >= abs(attack_dir.y)
@@ -103,6 +106,7 @@ func attack() -> void:
 
 func take_damage(damage_taken: int) -> void:
 	hitpoints -= damage_taken
+	sfx_hurt.play()
 	if hitpoints <= 0:
 		death()
 

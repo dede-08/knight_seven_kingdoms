@@ -22,6 +22,8 @@ var hitpoints_max: int
 
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var animation_playback: AnimationNodeStateMachinePlayback = $AnimationTree["parameters/playback"]
+@onready var sfx_attack: AudioStreamPlayer2D = $SfxAttack
+@onready var sfx_hurt: AudioStreamPlayer2D = $SfxHurt
 
 func _ready() -> void:
 	hitpoints_max = hitpoints
@@ -77,10 +79,10 @@ func update_animation() -> void:
 			
 			
 func attack() -> void:
-	#verify the player is not already attacking and set the player state
 	if state == State.ATTACK:
 		return
 	state = State.ATTACK
+	sfx_attack.play()
 	
 	#find the attack direction and push to animationtree blendspace2d
 	var mouse_pos: Vector2 = get_global_mouse_position()
@@ -96,6 +98,7 @@ func attack() -> void:
 func take_damage(damage_taken: int) -> void:
 	hitpoints -= damage_taken
 	update_hp_bar.emit((hitpoints * 100) / hitpoints_max)
+	sfx_hurt.play()
 	if hitpoints <= 0:
 		death()
 
