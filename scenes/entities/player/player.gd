@@ -27,7 +27,7 @@ var hitpoints_max: int
 @onready var sfx_footstep: AudioStreamPlayer2D = $SfxFootstep
 
 var _footstep_timer: float = 0.0
-const FOOTSTEP_INTERVAL: float = 0.15
+const FOOTSTEP_INTERVAL: float = 0.2
 
 func _ready() -> void:
 	hitpoints_max = hitpoints
