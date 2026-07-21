@@ -25,6 +25,7 @@ PlayerData="*uid://djghyogebexfj"
 LevelData="*uid://c6i75vq6uwama"
 MusicManager="*res://scripts/global/music_manager.gd"
 NetworkManager="*res://scripts/global/network_manager.gd"
+DebugLog="*res://scripts/global/debug_log.gd"
 
 [display]
 

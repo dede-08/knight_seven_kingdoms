@@ -391,7 +391,7 @@ height = 80.0
 size = Vector2(9, 45)
 
 [node name="Player" type="CharacterBody2D" unique_id=1469990671 groups=["player"]]
-collision_layer = 1
+collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_635qg")
 
@@ -404,8 +404,6 @@ vframes = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2095881379]
 shape = SubResource("CircleShape2D_635qg")
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=531586319]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=594843760]
 libraries/ = SubResource("AnimationLibrary_bjvvg")

@@ -9,19 +9,35 @@ var total_enemies: int
 var killed_enemies: int = 0
 var local_player: CharacterBody2D
 var _game_ended: bool = false
+var _camera: Camera2D
 
 @onready var HUD: Control = $UI/HUD
 @onready var sfx_level_up: AudioStreamPlayer = $SfxLevelUp
 
 func _ready() -> void:
+	_camera = Camera2D.new()
+	_camera.name = "GameCamera"
+	add_child(_camera)
+	_camera.make_current()
 	_spawn_players()
 	_setup_enemies()
 	_setup_hud()
+
+var _cam_log_timer: float = 0.0
+
+func _process(delta: float) -> void:
+	if local_player and is_instance_valid(local_player):
+		_camera.global_position = local_player.global_position
+		_cam_log_timer += delta
+		if _cam_log_timer >= 1.0:
+			_cam_log_timer = 0.0
+			DebugLog.log_msg("[CAM] local_player=%s lpos=%s cam_pos=%s" % [local_player.name, local_player.global_position, _camera.global_position])
 
 func _spawn_players() -> void:
 	var is_multiplayer_game: bool = multiplayer.has_multiplayer_peer()
 	
 	if is_multiplayer_game:
+		DebugLog.set_role("server" if multiplayer.is_server() else "client")
 		var server_id: int = 1
 		if multiplayer.is_server():
 			var peer_ids: Array = multiplayer.get_peers()
@@ -35,16 +51,17 @@ func _spawn_players() -> void:
 			_spawn_player_for_peer(server_id, 0)
 			_spawn_player_for_peer(my_id, 1)
 			local_player = $TestMap.get_node("Player_%d" % my_id)
+		DebugLog.log_msg("[SPAWN] is_server=%s my_id=%d local_player=%s" % [multiplayer.is_server(), multiplayer.get_unique_id(), local_player.name if local_player else "NULL"])
+		for child: Node in $TestMap.get_children():
+			if child is CharacterBody2D:
+				DebugLog.log_msg("[SPAWN] player=%s pos=%s auth=%s is_auth=%s" % [child.name, child.global_position, child.get_multiplayer_authority(), child.is_multiplayer_authority()])
 	else:
 		_spawn_local_player(0)
-	
-	_ensure_local_camera()
 
 func _spawn_player_for_peer(peer_id: int, index: int) -> void:
 	var player_scene: CharacterBody2D = player_packed.instantiate()
 	player_scene.name = "Player_%d" % peer_id
 	player_scene.set_multiplayer_authority(peer_id)
-	player_scene.get_node("Camera2D").enabled = false
 	$TestMap.add_child(player_scene, true)
 	var spawn_pos: Vector2 = NetworkManager.get_player_spawn_position(index)
 	player_scene.position = spawn_pos
@@ -53,7 +70,6 @@ func _spawn_player_for_peer(peer_id: int, index: int) -> void:
 func _spawn_local_player(index: int) -> void:
 	var player_scene: CharacterBody2D = player_packed.instantiate()
 	player_scene.name = "LocalPlayer"
-	player_scene.get_node("Camera2D").enabled = false
 	$TestMap.add_child(player_scene, true)
 	var spawn_pos: Vector2 = NetworkManager.get_player_spawn_position(index)
 	player_scene.position = spawn_pos
@@ -64,25 +80,6 @@ func _connect_player_signals(player: CharacterBody2D) -> void:
 	levelup.connect(player.calculate_stats)
 	player.game_over.connect(display_end_game_screen)
 	player.update_hp_bar.connect(HUD.update_hp_bar)
-
-func _ensure_local_camera() -> void:
-	_disable_all_cameras()
-	if local_player and local_player.has_node("Camera2D"):
-		var cam: Camera2D = local_player.get_node("Camera2D")
-		cam.enabled = true
-		cam.make_current()
-
-func _disable_all_cameras() -> void:
-	var cameras: Array[Node] = []
-	_find_cameras(self, cameras)
-	for cam: Camera2D in cameras:
-		cam.enabled = false
-
-func _find_cameras(node: Node, result: Array[Node]) -> void:
-	for child in node.get_children():
-		if child is Camera2D:
-			result.append(child)
-		_find_cameras(child, result)
 
 func _setup_enemies() -> void:
 	var enemy_array: Array = get_tree().get_nodes_in_group("enemies")
@@ -111,7 +108,6 @@ func experience_gained(exp_gain: int) -> void:
 		PlayerData.experience = new_experience
 
 func level_up(new_experience: int) -> void:
-	print("tengo mas poder")
 	new_experience -= LevelData.LEVEL_THRESHOLDS[PlayerData.level - 1]
 	PlayerData.level += 1
 	PlayerData.experience = new_experience

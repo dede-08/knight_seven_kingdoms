@@ -368,9 +368,6 @@ vframes = 8
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2095881379]
 shape = SubResource("CircleShape2D_635qg")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=531586319]
-enabled = false
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=594843760]
 libraries/ = SubResource("AnimationLibrary_bjvvg")
 

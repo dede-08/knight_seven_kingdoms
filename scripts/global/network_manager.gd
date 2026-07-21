@@ -76,7 +76,7 @@ func get_player_spawn_position(index: int) -> Vector2:
 		0:
 			return Vector2(293, 966)
 		1:
-			return Vector2(450, 966)
+			return Vector2(357, 966)
 		_:
 			return Vector2(293, 966)
 

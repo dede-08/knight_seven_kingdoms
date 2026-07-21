@@ -33,7 +33,6 @@ var state: State = State.IDLE
 var _target_player: CharacterBody2D = null
 
 func _ready() -> void:
-	$Camera2D.enabled = false
 	animation_tree.set_active(true)
 	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		$HitBox.set_deferred("monitoring", false)

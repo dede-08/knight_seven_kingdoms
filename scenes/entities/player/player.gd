@@ -28,13 +28,18 @@ var hitpoints_max: int
 
 var _footstep_timer: float = 0.0
 const FOOTSTEP_INTERVAL: float = 0.250
+var _debug_frame: int = 0
+var _logged_first_frame: bool = false
+var _spawn_grace_frames: int = 5
+const SPAWN_GRACE_TOTAL: int = 5
 
 func _ready() -> void:
+	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	hitpoints_max = hitpoints
 	animation_tree.set_active(true)
+	collision_mask = 0
 	calculate_stats()
-	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
-		$Camera2D.enabled = false
+	DebugLog.log_msg("[READY] name=%s pos=%s auth=%s is_auth=%s group=%s" % [name, global_position, get_multiplayer_authority(), is_multiplayer_authority(), get_groups()])
 
 func _unhandled_input(event: InputEvent) -> void:
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
@@ -43,8 +48,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		attack()
 
 func _physics_process(delta: float) -> void:
+	if not _logged_first_frame:
+		_logged_first_frame = true
+		DebugLog.log_msg("[PHYS_FIRST] name=%s auth=%s is_auth=%s has_peer=%s pos=%s" % [name, get_multiplayer_authority(), is_multiplayer_authority(), multiplayer.has_multiplayer_peer(), global_position])
+	if _spawn_grace_frames > 0:
+		_spawn_grace_frames -= 1
+		if _spawn_grace_frames == 0:
+			collision_mask = 1
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+	_debug_frame += 1
+	if _debug_frame % 30 == 1:
+		DebugLog.log_msg("[PHYS] name=%s frame=%d pos=%s vel=%s move_dir=%s state=%s is_auth=%s" % [name, _debug_frame, global_position, velocity, move_direction, State.keys()[state], is_multiplayer_authority()])
 	if not state == State.ATTACK:
 		movement_loop()
 	_update_footstep(delta)
@@ -64,15 +79,17 @@ func calculate_stats() -> void:
 	attack_speed = Equations.calculate_attack_speed()
 	var time_factor: float = Equations.BASE_ATTACK_SPEED / attack_speed
 	animation_tree.set("parameters/attack/TimeScale/scale", time_factor)
-	print("my new attack speed is: ", attack_speed)
 
 
 func movement_loop() -> void:
 	move_direction.x = int(Input.is_action_pressed("right")) - int(Input.is_action_pressed("left"))
 	move_direction.y = int(Input.is_action_pressed("down")) - int(Input.is_action_pressed("up"))
 	var motion: Vector2 = move_direction.normalized() * speed
+	if _spawn_grace_frames > 0:
+		return
 	set_velocity(motion)
-	move_and_slide()
+	if motion != Vector2.ZERO:
+		move_and_slide()
 	
 	#sprite flipping just for the idle and run mode
 	if state == State.IDLE or state == State.RUN:
