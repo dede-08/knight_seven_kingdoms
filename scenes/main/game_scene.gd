@@ -8,6 +8,8 @@ signal levelup
 @export var enemy_death_packed: PackedScene
 
 const ENEMY_ROUNDS: Array[int] = [3, 5, 7]
+const ENEMY_SPAWN_DELAY: float = 0.6
+const HEAL_PERCENT_PER_KILL: float = 0.10
 
 var total_enemies: int
 var killed_enemies: int = 0
@@ -110,11 +112,15 @@ func _start_round() -> void:
 	var count: int = ENEMY_ROUNDS[_current_round]
 	_enemies_alive_in_round = count
 	for i in range(count):
+		if _game_ended:
+			return
 		var spawn_pos: Vector2 = _enemy_spawn_points[i % _enemy_spawn_points.size()]
 		var extra_lap: int = i / _enemy_spawn_points.size()
 		if extra_lap > 0:
 			spawn_pos += Vector2(50, 50) * extra_lap
 		_spawn_enemy(spawn_pos)
+		if i < count - 1:
+			await get_tree().create_timer(ENEMY_SPAWN_DELAY).timeout
 
 func _spawn_enemy(spawn_pos: Vector2) -> void:
 	var enemy: CharacterBody2D = enemy_packed.instantiate()
@@ -133,6 +139,8 @@ func enemy_died(exp_reward: int) -> void:
 	killed_enemies += 1
 	experience_gained(exp_reward)
 	if _wave_mode:
+		if local_player and is_instance_valid(local_player):
+			local_player.heal(int(local_player.hitpoints_max * HEAL_PERCENT_PER_KILL))
 		_enemies_alive_in_round -= 1
 		if _enemies_alive_in_round <= 0:
 			_current_round += 1

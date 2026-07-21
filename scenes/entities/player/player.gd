@@ -144,6 +144,10 @@ func take_damage(damage_taken: int) -> void:
 	if hitpoints <= 0:
 		death()
 
+func heal(amount: int) -> void:
+	hitpoints = min(hitpoints + amount, hitpoints_max)
+	update_hp_bar.emit((hitpoints * 100) / hitpoints_max)
+
 func death() -> void:
 	game_over.emit(false)
 	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
