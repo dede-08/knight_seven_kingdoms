@@ -32,6 +32,7 @@ var state: State = State.IDLE
 
 var _target_player: CharacterBody2D = null
 var _enemy_frame: int = 0
+var effects_container: Node2D = null
 
 func _ready() -> void:
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
@@ -137,9 +138,7 @@ func take_damage(damage_taken: int) -> void:
 func death() -> void:
 	state = State.DEAD
 	died.emit(exp_reward)
-	var death_scene: Node2D = death_packed.instantiate()
-	death_scene.global_position = $Sprite2D.global_position + Vector2(-64, -192)
-	%Effects.add_child(death_scene)
+	_spawn_death_effect()
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		_rpc_enemy_died.rpc()
 	queue_free()
@@ -148,10 +147,14 @@ func death() -> void:
 func _rpc_enemy_died() -> void:
 	if not is_instance_valid(self):
 		return
+	_spawn_death_effect()
+	queue_free()
+
+func _spawn_death_effect() -> void:
 	var death_scene: Node2D = death_packed.instantiate()
 	death_scene.global_position = $Sprite2D.global_position + Vector2(-64, -192)
-	%Effects.add_child(death_scene)
-	queue_free()
+	var container: Node2D = effects_container if effects_container else %Effects
+	container.add_child(death_scene)
 
 func _on_hit_box_area_entered(area: Area2D) -> void:
 	var target: CharacterBody2D = area.owner

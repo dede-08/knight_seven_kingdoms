@@ -125,6 +125,7 @@ func _start_round() -> void:
 func _spawn_enemy(spawn_pos: Vector2) -> void:
 	var enemy: CharacterBody2D = enemy_packed.instantiate()
 	enemy.death_packed = enemy_death_packed
+	enemy.effects_container = $TestMap/Effects
 	enemy.died.connect(enemy_died)
 	$TestMap/Enemies.add_child(enemy)
 	enemy.global_position = spawn_pos
