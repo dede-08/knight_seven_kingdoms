@@ -4,12 +4,20 @@ signal levelup
 
 @export var end_game_screen_packed: PackedScene
 @export var player_packed: PackedScene
+@export var enemy_packed: PackedScene
+@export var enemy_death_packed: PackedScene
+
+const ENEMY_ROUNDS: Array[int] = [3, 5, 7]
 
 var total_enemies: int
 var killed_enemies: int = 0
 var local_player: CharacterBody2D
 var _game_ended: bool = false
 var _camera: Camera2D
+var _wave_mode: bool = false
+var _current_round: int = 0
+var _enemies_alive_in_round: int = 0
+var _enemy_spawn_points: Array[Vector2] = []
 
 @onready var HUD: Control = $UI/HUD
 @onready var sfx_level_up: AudioStreamPlayer = $SfxLevelUp
@@ -83,9 +91,38 @@ func _connect_player_signals(player: CharacterBody2D) -> void:
 
 func _setup_enemies() -> void:
 	var enemy_array: Array = get_tree().get_nodes_in_group("enemies")
-	total_enemies = enemy_array.size()
-	for i in enemy_array:
-		i.died.connect(enemy_died)
+	if multiplayer.has_multiplayer_peer():
+		total_enemies = enemy_array.size()
+		for i in enemy_array:
+			i.died.connect(enemy_died)
+		return
+
+	_wave_mode = true
+	for e: CharacterBody2D in enemy_array:
+		_enemy_spawn_points.append(e.global_position)
+		e.free()
+	total_enemies = 0
+	for round_count in ENEMY_ROUNDS:
+		total_enemies += round_count
+	_start_round()
+
+func _start_round() -> void:
+	var count: int = ENEMY_ROUNDS[_current_round]
+	_enemies_alive_in_round = count
+	for i in range(count):
+		var spawn_pos: Vector2 = _enemy_spawn_points[i % _enemy_spawn_points.size()]
+		var extra_lap: int = i / _enemy_spawn_points.size()
+		if extra_lap > 0:
+			spawn_pos += Vector2(50, 50) * extra_lap
+		_spawn_enemy(spawn_pos)
+
+func _spawn_enemy(spawn_pos: Vector2) -> void:
+	var enemy: CharacterBody2D = enemy_packed.instantiate()
+	enemy.death_packed = enemy_death_packed
+	enemy.died.connect(enemy_died)
+	$TestMap/Enemies.add_child(enemy)
+	enemy.global_position = spawn_pos
+	enemy.spawn_point = spawn_pos
 
 func _setup_hud() -> void:
 	HUD.update_level_indicator()
@@ -95,7 +132,15 @@ func enemy_died(exp_reward: int) -> void:
 		return
 	killed_enemies += 1
 	experience_gained(exp_reward)
-	if killed_enemies == total_enemies:
+	if _wave_mode:
+		_enemies_alive_in_round -= 1
+		if _enemies_alive_in_round <= 0:
+			_current_round += 1
+			if _current_round < ENEMY_ROUNDS.size():
+				_start_round()
+			else:
+				display_end_game_screen(true)
+	elif killed_enemies == total_enemies:
 		display_end_game_screen(true)
 
 func experience_gained(exp_gain: int) -> void:
