@@ -48,6 +48,12 @@ func _on_start_pressed() -> void:
 	if NetworkManager.player_count < 2:
 		status_label.text = "Waiting for player to connect..."
 		return
+	_rpc_start_game.rpc()
+	start_game_pressed.emit()
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_start_game() -> void:
 	start_game_pressed.emit()
 
 
@@ -68,9 +74,7 @@ func _on_player_connected(_peer_id: int) -> void:
 	if mode == "host":
 		status_label.text = "Player connected!\nIP: %s\nPort: %d\nReady to start!" % [_get_local_ip(), NetworkManager.DEFAULT_PORT]
 	elif mode == "join":
-		status_label.text = "Connected! Starting game..."
-		await get_tree().create_timer(0.5).timeout
-		start_game_pressed.emit()
+		status_label.text = "Connected! Waiting for host to start..."
 
 
 func _on_server_disconnected() -> void:
