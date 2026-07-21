@@ -32,17 +32,24 @@ const FOOTSTEP_INTERVAL: float = 0.250
 func _ready() -> void:
 	hitpoints_max = hitpoints
 	animation_tree.set_active(true)
-	calculate_stats( )
-	
+	calculate_stats()
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		$Camera2D.enabled = false
+
 func _unhandled_input(event: InputEvent) -> void:
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		attack()
-	
 
 func _physics_process(delta: float) -> void:
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		return
 	if not state == State.ATTACK:
 		movement_loop()
 	_update_footstep(delta)
+	if multiplayer.has_multiplayer_peer():
+		_sync_position.rpc(global_position, velocity, $Sprite2D.flip_h, _get_current_anim())
 
 func _update_footstep(delta: float) -> void:
 	if state == State.RUN:
@@ -105,6 +112,10 @@ func attack() -> void:
 	animation_tree.set("parameters/attack/BlendSpace2D/blend_position", attack_dir)
 	update_animation()
 	
+	# In multiplayer, send attack to server for processing
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		_rpc_server_attack.rpc_id(1)
+	
 	#return the player state after attack has finished
 	await get_tree().create_timer(attack_speed).timeout
 	state = State.IDLE
@@ -118,6 +129,66 @@ func take_damage(damage_taken: int) -> void:
 
 func death() -> void:
 	game_over.emit(false)
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		_rpc_player_died.rpc_id(1)
 
 func _on_hit_box_area_entered(area: Area2D) -> void:
+	# In multiplayer, only server processes direct hit collisions
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		return
 	area.owner.take_damage(attack_damage)
+
+func _get_current_anim() -> String:
+	match state:
+		State.IDLE:
+			return "idle"
+		State.RUN:
+			return "run"
+		State.ATTACK:
+			return "attack"
+		_:
+			return "idle"
+
+@rpc("authority", "call_remote", "reliable")
+func _sync_position(pos: Vector2, vel: Vector2, flip: bool, anim_name: String) -> void:
+	global_position = pos
+	velocity = vel
+	$Sprite2D.flip_h = flip
+	match anim_name:
+		"idle":
+			if state != State.IDLE:
+				state = State.IDLE
+				update_animation()
+		"run":
+			if state != State.RUN:
+				state = State.RUN
+				update_animation()
+		"attack":
+			if state != State.ATTACK:
+				state = State.ATTACK
+				update_animation()
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_server_attack() -> void:
+	if not multiplayer.is_server():
+		return
+	var enemies: Array = get_tree().get_nodes_in_group("enemies")
+	var nearest: CharacterBody2D = null
+	var nearest_dist: float = 100.0
+	for e: CharacterBody2D in enemies:
+		if is_instance_valid(e):
+			var dist: float = global_position.distance_to(e.global_position)
+			if dist < nearest_dist:
+				nearest_dist = dist
+				nearest = e
+	if nearest != null:
+		nearest.take_damage(attack_damage)
+
+@rpc("any_peer", "call_remote", "reliable")
+func rpc_take_damage(damage: int) -> void:
+	take_damage(damage)
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_player_died() -> void:
+	if multiplayer.is_server():
+		game_over.emit(false)

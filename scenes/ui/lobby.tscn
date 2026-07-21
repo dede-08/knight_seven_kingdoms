@@ -1,0 +1,164 @@
+[gd_scene load_steps=5 format=3 uid="uid://lobby_scene_uid"]
+
+[ext_resource type="Script" path="res://scenes/ui/lobby.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dd5chn7mty8ao" path="res://assets/ui/buttons/Button_Blue_3Slides.png" id="2_btn"]
+[ext_resource type="Texture2D" uid="uid://t6ugsh3rd7ag" path="res://assets/ui/buttons/Button_Blue_3Slides_Pressed.png" id="3_btn_pressed"]
+[ext_resource type="Texture2D" uid="uid://crpe6wlm1i2bo" path="res://assets/ui/buttons/Button_Hover_3Slides.png" id="4_btn_hover"]
+[ext_resource type="FontFile" uid="uid://d00h4ctsh5ohj" path="res://assets/fonts/PirataOne-Regular.ttf" id="5_font"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="VB" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Title" type="Label" parent="VB"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 16
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 80
+text = "Multiplayer Lobby"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HostPanel" type="VBoxContainer" parent="VB"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="StartButton" type="TextureButton" parent="VB/HostPanel"]
+custom_minimum_size = Vector2(450, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("2_btn")
+texture_pressed = ExtResource("3_btn_pressed")
+texture_hover = ExtResource("4_btn_hover")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="VB/HostPanel/StartButton"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 16
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 60
+text = "Start Game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClientPanel" type="VBoxContainer" parent="VB"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="IPInput" type="LineEdit" parent="VB/ClientPanel"]
+custom_minimum_size = Vector2(500, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 40
+placeholder_text = "127.0.0.1"
+text = "127.0.0.1"
+horizontal_alignment = 1
+
+[node name="ConnectButton" type="TextureButton" parent="VB/ClientPanel"]
+custom_minimum_size = Vector2(450, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("2_btn")
+texture_pressed = ExtResource("3_btn_pressed")
+texture_hover = ExtResource("4_btn_hover")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="VB/ClientPanel/ConnectButton"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 16
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 60
+text = "Connect"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="VB"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_outline_size = 8
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 40
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Spacer" type="Control" parent="VB"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="BackButton" type="TextureButton" parent="VB"]
+custom_minimum_size = Vector2(450, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("2_btn")
+texture_pressed = ExtResource("3_btn_pressed")
+texture_hover = ExtResource("4_btn_hover")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="VB/BackButton"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6431373)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 16
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 60
+text = "Back"
+horizontal_alignment = 1
+vertical_alignment = 1

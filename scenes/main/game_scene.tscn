@@ -8,10 +8,12 @@
 [ext_resource type="Script" uid="uid://32dmrfbu53if" path="res://scenes/main/hud.gd" id="4_o41ig"]
 [ext_resource type="Texture2D" uid="uid://by2tr4oqf3u47" path="res://assets/ui/elements/Banner_Connection_Up.png" id="5_ynmmy"]
 [ext_resource type="FontFile" uid="uid://d00h4ctsh5ohj" path="res://assets/fonts/PirataOne-Regular.ttf" id="6_ynmmy"]
+[ext_resource type="PackedScene" uid="uid://djs6l88pp5r8c" path="res://scenes/entities/player/player.tscn" id="7_player"]
 
 [node name="GameScene" type="Node2D" unique_id=1321995244]
 script = ExtResource("1_rfwcf")
 end_game_screen_packed = ExtResource("2_yaarb")
+player_packed = ExtResource("7_player")
 
 [node name="SfxLevelUp" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_levelup")

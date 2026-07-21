@@ -26,18 +26,29 @@ var state: State = State.IDLE
 @onready var spawn_point: Vector2 = global_position
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var animation_playback: AnimationNodeStateMachinePlayback = $AnimationTree["parameters/playback"]
-@onready var player: CharacterBody2D = get_tree().get_first_node_in_group("player")
 @onready var nav_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sfx_attack: AudioStreamPlayer2D = $SfxAttack
 @onready var sfx_hurt: AudioStreamPlayer2D = $SfxHurt
 
+var _target_player: CharacterBody2D = null
+
 func _ready() -> void:
+	$Camera2D.enabled = false
 	animation_tree.set_active(true)
-	
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		$HitBox.set_deferred("monitoring", false)
+
 func _physics_process(_delta: float) -> void:
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		return
 	if state == State.DEAD:
 		return
 	if state == State.ATTACK:
+		return
+	_target_player = _find_closest_player()
+	if _target_player == null:
+		state = State.IDLE
+		update_animation()
 		return
 	if distance_to_player() <= attack_range:
 		state = State.ATTACK
@@ -51,13 +62,29 @@ func _physics_process(_delta: float) -> void:
 	elif state != State.IDLE:
 		state = State.IDLE
 		update_animation()
+	if multiplayer.has_multiplayer_peer():
+		_sync_enemy.rpc(global_position, _get_current_anim(), $Sprite2D.flip_h)
+
+func _find_closest_player() -> CharacterBody2D:
+	var players: Array = get_tree().get_nodes_in_group("player")
+	var closest: CharacterBody2D = null
+	var closest_dist: float = 99999.0
+	for p: CharacterBody2D in players:
+		if is_instance_valid(p):
+			var dist: float = global_position.distance_to(p.global_position)
+			if dist < closest_dist:
+				closest_dist = dist
+				closest = p
+	return closest
 
 func distance_to_player() -> float:
-	return global_position.distance_to(player.global_position)
+	if _target_player == null or not is_instance_valid(_target_player):
+		return 99999.0
+	return global_position.distance_to(_target_player.global_position)
 
 func move() -> void:
 	if state == State.CHASE:
-		nav_agent.target_position = player.global_position
+		nav_agent.target_position = _target_player.global_position
 	elif state == State.RETURN:
 		nav_agent.target_position = spawn_point
 	var next_path_position: Vector2 = nav_agent.get_next_path_position()
@@ -95,7 +122,7 @@ func update_animation() -> void:
 
 func attack() -> void:
 	sfx_attack.play()
-	var player_pos: Vector2 = player.global_position
+	var player_pos: Vector2 = _target_player.global_position
 	var attack_dir: Vector2 = (player_pos - global_position).normalized()
 	$Sprite2D.flip_h = attack_dir.x < 0 and abs(attack_dir.x) >= abs(attack_dir.y)
 	animation_tree.set("parameters/attack/BlendSpace2D/blend_position", attack_dir)
@@ -111,11 +138,60 @@ func take_damage(damage_taken: int) -> void:
 		death()
 
 func death() -> void:
+	state = State.DEAD
 	died.emit(exp_reward)
+	var death_scene: Node2D = death_packed.instantiate()
+	death_scene.global_position = $Sprite2D.global_position + Vector2(-64, -192)
+	%Effects.add_child(death_scene)
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		_rpc_enemy_died.rpc()
+	queue_free()
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_enemy_died() -> void:
+	if not is_instance_valid(self):
+		return
 	var death_scene: Node2D = death_packed.instantiate()
 	death_scene.global_position = $Sprite2D.global_position + Vector2(-64, -192)
 	%Effects.add_child(death_scene)
 	queue_free()
 
 func _on_hit_box_area_entered(area: Area2D) -> void:
-	area.owner.take_damage(attack_damage)
+	var target: CharacterBody2D = area.owner
+	if not is_instance_valid(target):
+		return
+	if not multiplayer.has_multiplayer_peer():
+		target.take_damage(attack_damage)
+	elif target.is_multiplayer_authority():
+		target.take_damage(attack_damage)
+	else:
+		target.rpc_take_damage.rpc_id(target.get_multiplayer_authority(), attack_damage)
+
+func _get_current_anim() -> String:
+	match state:
+		State.IDLE:
+			return "idle"
+		State.CHASE, State.RETURN:
+			return "run"
+		State.ATTACK:
+			return "attack"
+		_:
+			return "idle"
+
+@rpc("authority", "call_remote", "reliable")
+func _sync_enemy(pos: Vector2, anim_name: String, flip: bool) -> void:
+	global_position = pos
+	$Sprite2D.flip_h = flip
+	match anim_name:
+		"idle":
+			if state != State.IDLE:
+				state = State.IDLE
+				update_animation()
+		"run":
+			if state != State.CHASE and state != State.RETURN:
+				state = State.CHASE
+				update_animation()
+		"attack":
+			if state != State.ATTACK:
+				state = State.ATTACK
+				update_animation()

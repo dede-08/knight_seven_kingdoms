@@ -11,8 +11,10 @@ func _ready() -> void:
 
 
 func _on_replay_pressed() -> void:
+	NetworkManager.disconnect_from_server()
 	repeat_level.emit("end_game_screen")
 
 
 func _on_main_menu_pressed() -> void:
+	NetworkManager.disconnect_from_server()
 	main_menu.emit("end_game_screen")
