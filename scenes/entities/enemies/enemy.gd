@@ -31,38 +31,44 @@ var state: State = State.IDLE
 @onready var sfx_hurt: AudioStreamPlayer2D = $SfxHurt
 
 var _target_player: CharacterBody2D = null
+var _enemy_frame: int = 0
 
 func _ready() -> void:
+	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	animation_tree.set_active(true)
 	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		$HitBox.set_deferred("monitoring", false)
+		$NavigationAgent2D.set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
 
 func _physics_process(_delta: float) -> void:
 	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		return
 	if state == State.DEAD:
 		return
-	if state == State.ATTACK:
-		return
-	_target_player = _find_closest_player()
-	if _target_player == null:
-		state = State.IDLE
-		update_animation()
-		return
-	if distance_to_player() <= attack_range:
-		state = State.ATTACK
-		attack()
-	elif distance_to_player() <= aggro_range:
-		state = State.CHASE
-		move()
-	elif global_position.distance_to(spawn_point) > 32:
-		state = State.RETURN
-		move()
-	elif state != State.IDLE:
-		state = State.IDLE
-		update_animation()
+	_enemy_frame += 1
+	if _enemy_frame % 60 == 1:
+		var player_count: int = get_tree().get_nodes_in_group("player").size()
+		DebugLog.log_msg("[ENEMY] name=%s frame=%d state=%s pos=%s players=%d target=%s" % [name, _enemy_frame, State.keys()[state], global_position, player_count, _target_player.name if _target_player else "null"])
+	if state != State.ATTACK:
+		_target_player = _find_closest_player()
+		if _target_player == null:
+			state = State.IDLE
+			update_animation()
+		elif distance_to_player() <= attack_range:
+			state = State.ATTACK
+			velocity = Vector2.ZERO
+			attack()
+		elif distance_to_player() <= aggro_range:
+			state = State.CHASE
+			move()
+		elif global_position.distance_to(spawn_point) > 32:
+			state = State.RETURN
+			move()
+		elif state != State.IDLE:
+			state = State.IDLE
+			update_animation()
 	if multiplayer.has_multiplayer_peer():
-		_sync_enemy.rpc(global_position, _get_current_anim(), $Sprite2D.flip_h)
+		_sync_enemy.rpc(position, _get_current_anim(), $Sprite2D.flip_h)
 
 func _find_closest_player() -> CharacterBody2D:
 	var players: Array = get_tree().get_nodes_in_group("player")
@@ -88,25 +94,17 @@ func move() -> void:
 		nav_agent.target_position = spawn_point
 	var next_path_position: Vector2 = nav_agent.get_next_path_position()
 	velocity = global_position.direction_to(next_path_position) * speed
-	
-	if nav_agent.avoidance_enabled:
-		nav_agent.set_velocity(velocity)
-	else:
-		_on_navigation_agent_2d_velocity_computed(velocity)
 	move_and_slide()
-	
+
 	#sprite flipping only in idle and run
 	if state == State.IDLE or state == State.CHASE:
 		if velocity.x < -0.01:
 			$Sprite2D.flip_h = true
 		elif velocity.x > 0.01:
 			$Sprite2D.flip_h = false
-	
+
 	#update animation
 	update_animation()
-	
-func _on_navigation_agent_2d_velocity_computed(safe_velocity: Vector2) -> void:
-	nav_agent.velocity = safe_velocity
 
 func update_animation() -> void:
 	match state:
@@ -179,7 +177,8 @@ func _get_current_anim() -> String:
 
 @rpc("authority", "call_remote", "reliable")
 func _sync_enemy(pos: Vector2, anim_name: String, flip: bool) -> void:
-	global_position = pos
+	DebugLog.log_msg("[ENEMY_SYNC_RECV] name=%s pos=%s anim=%s auth=%s" % [name, pos, anim_name, get_multiplayer_authority()])
+	position = pos
 	$Sprite2D.flip_h = flip
 	match anim_name:
 		"idle":

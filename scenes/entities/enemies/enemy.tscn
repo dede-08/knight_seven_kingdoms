@@ -380,7 +380,7 @@ parameters/attack/TimeScale/scale = 1.0
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=517617300]
 path_postprocessing = 1
-avoidance_enabled = true
+avoidance_enabled = false
 radius = 48.0
 neighbor_distance = 128.0
 max_speed = 128.0
@@ -414,5 +414,4 @@ stream = ExtResource("3_clash1")
 [node name="SfxHurt" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("4_clash2")
 
-[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
 [connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]

@@ -168,6 +168,7 @@ func _get_current_anim() -> String:
 
 @rpc("authority", "call_remote", "reliable")
 func _sync_position(pos: Vector2, vel: Vector2, flip: bool, anim_name: String) -> void:
+	DebugLog.log_msg("[PLAYER_SYNC_RECV] name=%s pos=%s anim=%s" % [name, pos, anim_name])
 	global_position = pos
 	velocity = vel
 	$Sprite2D.flip_h = flip
